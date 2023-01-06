@@ -5,12 +5,15 @@ package com.lebrwcd.reggie.backend.controller;/**
  */
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lebrwcd.reggie.backend.dto.EmployAddDTO;
 import com.lebrwcd.reggie.backend.dto.LoginFormDTO;
 import com.lebrwcd.reggie.backend.entity.Employee;
 import com.lebrwcd.reggie.backend.service.EmployeeService;
 import com.lebrwcd.reggie.common.R;
 import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Local;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,10 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 /**
  * ClassName EmployeeController
- * Description TODO
+ * Description 员工控制器
  *
  * @author lebr7wcd
  * @version 1.0
@@ -35,6 +39,38 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @PostMapping()
+    public R<String> addEmployee(HttpServletRequest request,@RequestBody EmployAddDTO dto) {
+
+        log.info("=========添加员工信息: {}",dto.toString());
+
+       /* // username唯一约束，先判断用户名是否在数据库中存在
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Employee::getUsername,dto.getUsername());
+        Employee one = employeeService.getOne(queryWrapper);
+        if (one != null) {
+            // 存在员工，添加失败
+            return R.error("该员工已存在，请勿重复添加！");
+        }*/
+        // 可以添加
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(dto,employee);
+        // 获得当前用户
+        Long user = (Long) request.getSession().getAttribute("employeeId");
+        employee.setCreateUser(user);
+        employee.setUpdateUser(user);
+        // 设置初始密码 123456
+        String defaultPassword = "123456";
+        String password = DigestUtils.md5DigestAsHex(defaultPassword.getBytes());
+        employee.setPassword(password);
+        // 设置时间
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+
+        employeeService.save(employee);
+        return R.success("添加成功！");
+    }
 
     /**
      * 登录

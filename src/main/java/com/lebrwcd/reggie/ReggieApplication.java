@@ -7,6 +7,7 @@ package com.lebrwcd.reggie;/**
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
 /**
  * ClassName ReggieApplication
@@ -17,6 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2023/1/2
  */
 @SpringBootApplication
+@ServletComponentScan
 @Slf4j
 public class ReggieApplication {
     public static void main(String[] args) {
