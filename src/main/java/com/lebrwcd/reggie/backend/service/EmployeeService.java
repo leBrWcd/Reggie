@@ -1,7 +1,14 @@
 package com.lebrwcd.reggie.backend.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lebrwcd.reggie.backend.dto.EmployAddDTO;
+import com.lebrwcd.reggie.backend.dto.LoginFormDTO;
 import com.lebrwcd.reggie.backend.entity.Employee;
+import com.lebrwcd.reggie.backend.vo.EmployeeQueryVO;
+import com.lebrwcd.reggie.common.R;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author lebrwcd
@@ -9,4 +16,10 @@ import com.lebrwcd.reggie.backend.entity.Employee;
  * @note 员工服务接口
  */
 public interface EmployeeService extends IService<Employee> {
+
+    R<Employee> login(HttpServletRequest request,LoginFormDTO loginForm);
+
+    R<String> add(HttpServletRequest request, EmployAddDTO dto);
+
+    R<Page<Employee>> pageQuery(Long pageSize, Long pageNum, String name);
 }
