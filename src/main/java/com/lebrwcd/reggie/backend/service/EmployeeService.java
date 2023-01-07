@@ -3,6 +3,7 @@ package com.lebrwcd.reggie.backend.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lebrwcd.reggie.backend.dto.EmployAddDTO;
+import com.lebrwcd.reggie.backend.dto.EmployStatusDTO;
 import com.lebrwcd.reggie.backend.dto.LoginFormDTO;
 import com.lebrwcd.reggie.backend.entity.Employee;
 import com.lebrwcd.reggie.backend.vo.EmployeeQueryVO;
@@ -22,4 +23,6 @@ public interface EmployeeService extends IService<Employee> {
     R<String> add(HttpServletRequest request, EmployAddDTO dto);
 
     R<Page<Employee>> pageQuery(Long pageSize, Long pageNum, String name);
+
+    R<String> updateStatus(HttpServletRequest request,EmployStatusDTO dto);
 }

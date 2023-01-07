@@ -7,6 +7,7 @@ package com.lebrwcd.reggie.backend.controller;/**
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lebrwcd.reggie.backend.dto.EmployAddDTO;
+import com.lebrwcd.reggie.backend.dto.EmployStatusDTO;
 import com.lebrwcd.reggie.backend.dto.LoginFormDTO;
 import com.lebrwcd.reggie.backend.entity.Employee;
 import com.lebrwcd.reggie.backend.service.EmployeeService;
@@ -38,6 +39,13 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+
+
+    @PutMapping()
+    public R<String> statusHandle(HttpServletRequest request,@RequestBody EmployStatusDTO dto) {
+        log.info("修改的员工信息为: {}",dto.toString());
+        return employeeService.updateStatus(request,dto);
+    }
 
 
     /**

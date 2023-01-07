@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lebrwcd.reggie.backend.dto.EmployAddDTO;
+import com.lebrwcd.reggie.backend.dto.EmployStatusDTO;
 import com.lebrwcd.reggie.backend.dto.LoginFormDTO;
 import com.lebrwcd.reggie.backend.entity.Employee;
 import com.lebrwcd.reggie.backend.mapper.EmployeeMapper;
@@ -15,6 +16,7 @@ import com.lebrwcd.reggie.backend.service.EmployeeService;
 import com.lebrwcd.reggie.backend.vo.EmployeeQueryVO;
 import com.lebrwcd.reggie.common.R;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -35,7 +37,6 @@ import java.util.Map;
  */
 @Service
 public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> implements EmployeeService {
-
 
     @Override
     public R<Employee> login(HttpServletRequest request,LoginFormDTO loginForm) {
@@ -115,5 +116,20 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
             return R.success(employeePage);
         }
         return null;
+    }
+
+    @Override
+    public R<String> updateStatus(HttpServletRequest request,EmployStatusDTO dto) {
+        // 1.获取当前用户id
+        long userId = (long) request.getSession().getAttribute("employeeId");
+        Long employeeId = dto.getId();
+        Employee employee = baseMapper.selectById(employeeId);
+        if (employee != null) {
+            employee.setStatus(dto.getStatus());
+            employee.setUpdateUser(userId);
+            employee.setUpdateTime(LocalDateTime.now());
+        }
+        baseMapper.updateById(employee);
+        return R.success("修改员工状态成功！");
     }
 }
