@@ -17,9 +17,19 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class EmployStatusDTO {
+public class EmployUpdateDTO {
 
     private Long id;
 
     private Integer status;
+
+    private String username;
+
+    private String name;
+    
+    private String phone;
+
+    private String sex;
+
+    private String idNumber;
 }

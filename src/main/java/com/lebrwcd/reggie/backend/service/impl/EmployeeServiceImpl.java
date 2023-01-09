@@ -8,24 +8,21 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lebrwcd.reggie.backend.dto.EmployAddDTO;
-import com.lebrwcd.reggie.backend.dto.EmployStatusDTO;
+import com.lebrwcd.reggie.backend.dto.EmployUpdateDTO;
 import com.lebrwcd.reggie.backend.dto.LoginFormDTO;
 import com.lebrwcd.reggie.backend.entity.Employee;
 import com.lebrwcd.reggie.backend.mapper.EmployeeMapper;
 import com.lebrwcd.reggie.backend.service.EmployeeService;
-import com.lebrwcd.reggie.backend.vo.EmployeeQueryVO;
 import com.lebrwcd.reggie.common.R;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ClassName EmployeeServiceImpl
@@ -119,7 +116,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     }
 
     @Override
-    public R<String> updateStatus(HttpServletRequest request,EmployStatusDTO dto) {
+    public R<String> updateStatus(HttpServletRequest request, EmployUpdateDTO dto) {
         // 1.获取当前用户id
         long userId = (long) request.getSession().getAttribute("employeeId");
         Long employeeId = dto.getId();
@@ -131,5 +128,14 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         }
         baseMapper.updateById(employee);
         return R.success("修改员工状态成功！");
+    }
+
+    @Override
+    public R<String> editEmployee(HttpServletRequest request, EmployUpdateDTO dto) {
+        // 1.先查询用户
+        Employee employee = baseMapper.selectById(dto.getId());
+        BeanUtils.copyProperties(dto,employee);
+        baseMapper.updateById(employee);
+        return R.success("修改员工信息成功！");
     }
 }

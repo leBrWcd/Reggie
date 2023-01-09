@@ -4,25 +4,18 @@ package com.lebrwcd.reggie.backend.controller;/**
  * @note
  */
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lebrwcd.reggie.backend.dto.EmployAddDTO;
-import com.lebrwcd.reggie.backend.dto.EmployStatusDTO;
+import com.lebrwcd.reggie.backend.dto.EmployUpdateDTO;
 import com.lebrwcd.reggie.backend.dto.LoginFormDTO;
 import com.lebrwcd.reggie.backend.entity.Employee;
 import com.lebrwcd.reggie.backend.service.EmployeeService;
-import com.lebrwcd.reggie.backend.vo.EmployeeQueryVO;
 import com.lebrwcd.reggie.common.R;
-import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.Local;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 
 /**
  * ClassName EmployeeController
@@ -40,10 +33,27 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable("id") Long id) {
+
+        log.info("根据id查询员工信息，id : {}",id);
+        Employee employee = employeeService.getById(id);
+        // 脱敏处理
+        employee.setPassword("*******");
+        return R.success(employee);
+
+    }
+
 
     @PutMapping()
-    public R<String> statusHandle(HttpServletRequest request,@RequestBody EmployStatusDTO dto) {
+    public R<String> update(HttpServletRequest request,@RequestBody EmployUpdateDTO dto) {
         log.info("修改的员工信息为: {}",dto.toString());
+        // 1.判断是修改状态还是编辑员工信息
+        // 1.1先查询员工的状态与前端传过来的状态是否一致，不一致表示需要修改状态，一致编辑员工信息
+        Employee employee = employeeService.getById(dto.getId());
+        if (employee.getStatus().equals(dto.getStatus())) {
+            return employeeService.editEmployee(request,dto);
+        }
         return employeeService.updateStatus(request,dto);
     }
 
