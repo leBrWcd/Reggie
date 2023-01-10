@@ -47,7 +47,10 @@ public class EmployeeController {
 
     @PutMapping()
     public R<String> update(HttpServletRequest request,@RequestBody EmployUpdateDTO dto) {
+
         log.info("修改的员工信息为: {}",dto.toString());
+        log.info("当前线程id: {}",Thread.currentThread().getId());
+
         // 1.判断是修改状态还是编辑员工信息
         // 1.1先查询员工的状态与前端传过来的状态是否一致，不一致表示需要修改状态，一致编辑员工信息
         Employee employee = employeeService.getById(dto.getId());
