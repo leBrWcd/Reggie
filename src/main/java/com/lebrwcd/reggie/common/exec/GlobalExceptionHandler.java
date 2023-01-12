@@ -47,4 +47,16 @@ public class GlobalExceptionHandler  {
         }
        return R.error("未知错误！");
     }
+
+
+    /**
+     * 处理自定义的CustomerException
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(CustomerException.class)
+    public R<String> exceptionHandler(CustomerException exception) {
+        return R.error(exception.getMessage());
+    }
+
 }
