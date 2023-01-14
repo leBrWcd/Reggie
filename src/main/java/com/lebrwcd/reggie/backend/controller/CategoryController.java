@@ -4,6 +4,7 @@ package com.lebrwcd.reggie.backend.controller;/**
  * @note
  */
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lebrwcd.reggie.backend.dto.CategoryUpdateDTO;
 import com.lebrwcd.reggie.backend.entity.Category;
@@ -13,6 +14,8 @@ import com.lebrwcd.reggie.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * ClassName CategoryController
@@ -29,6 +32,15 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @GetMapping("/list")
+    public R<List<Category>> getCategoryList(Integer type) {
+        log.info("菜品分类type ==========={}",type);
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Category::getType,type);
+        List<Category> list = categoryService.list(wrapper);
+        return R.success(list);
+    }
 
     @DeleteMapping
     public R<String> delete(Long id) {

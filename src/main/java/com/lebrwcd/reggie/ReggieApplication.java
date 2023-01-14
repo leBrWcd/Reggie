@@ -24,5 +24,6 @@ public class ReggieApplication {
     public static void main(String[] args) {
         SpringApplication.run(ReggieApplication.class);
         log.info("项目启动成功...");
+        log.info("后台管理系统首页地址：http://localhost:8080/backend/index.html");
     }
 }
