@@ -15,4 +15,12 @@ public interface DishService extends IService<Dish> {
     R<String> insert(DishDTO dish);
 
     R<Page<DishDTO>> pageQuery(Long pageSize, Long pageNum, String name);
+
+    R<DishDTO> getDishById(Long id);
+
+    R<String> updateDish(DishDTO dto);
+
+    R<String> sellStaus(int status, String ids);
+
+    R<String> deleteDish(String ids);
 }

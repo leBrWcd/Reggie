@@ -26,8 +26,14 @@ import java.util.List;
 @NoArgsConstructor
 public class DishDTO extends Dish {
 
+    /**
+     * 菜品口味组合
+     */
     private List<DishFlavor> flavors = new ArrayList<>();
 
+    /**
+     * 分类名称
+     */
     private String categoryName;
 
     private Integer copies;
