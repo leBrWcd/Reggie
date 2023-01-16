@@ -7,12 +7,13 @@ package com.lebrwcd.reggie.backend.controller;/**
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lebrwcd.reggie.backend.dto.DishDTO;
 import com.lebrwcd.reggie.backend.entity.Dish;
-import com.lebrwcd.reggie.backend.entity.DishFlavor;
 import com.lebrwcd.reggie.backend.service.DishService;
 import com.lebrwcd.reggie.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * ClassName DishController
@@ -30,6 +31,26 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
+    /**
+     * 列表查询
+     * @param categoryId
+     * @param name
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> list(@RequestParam(required = false) Long categoryId,
+                              @RequestParam(required = false) String name) {
+
+        log.info("菜品查询列表：categoryId : {} , name = {}",categoryId,name);
+        return dishService.listByParam(categoryId,name);
+
+    }
+
+    /**
+     * 删除菜品 - 批量删除/单个删除
+     * @param ids
+     * @return
+     */
     @DeleteMapping
     public R<String> deleteDish(@RequestParam("ids") String ids) {
         log.info("删除的菜品id为：{}",ids);
@@ -38,7 +59,7 @@ public class DishController {
 
     /**
      *
-     * @param status 待修改的status 0：停售， 1：启售
+     * @param status 待修改的status 0：停售， 1：启售  批量修改 / 单个修改
      * @param ids
      * @return
      */

@@ -89,9 +89,9 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         // 构造分页查询条件
         LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
         // 按照更新时间降序排序
-        wrapper.eq(name != null, Dish::getName, name)
+        wrapper.like(name != null, Dish::getName, name)
                 .orderByDesc(Dish::getUpdateTime)
-                .eq(Dish::getIsDeleted,0);
+                .eq(Dish::getIsDeleted, 0);
         page = baseMapper.selectPage(page, wrapper);
 
         // 对象拷贝,原分页中的records是List<Dish> 我们要的是Lish<DishDTO>
@@ -165,7 +165,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             // 批量修改
             List<String> idList = Arrays.stream(split).collect(Collectors.toList());
             List<Dish> dishes = baseMapper.selectBatchIds(idList);
-            dishes = dishes.stream().map( e -> {
+            dishes = dishes.stream().map(e -> {
                 e.setStatus(status);
                 return e;
             }).collect(Collectors.toList());
@@ -189,6 +189,17 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             List<String> idList = Arrays.stream(split).collect(Collectors.toList());
             baseMapper.deleteBatchIds(idList);
         }
-        return R.success("修改状态成功");
+        return R.success("删除成功!");
+    }
+
+    @Override
+    public R<List<Dish>> listByParam(Long categoryId, String name) {
+
+        // 1.判断两个条件
+        LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(categoryId != null, Dish::getCategoryId, categoryId)
+                .like(name != null,Dish::getName,name);
+        List<Dish> dishes = baseMapper.selectList(wrapper);
+        return R.success(dishes);
     }
 }

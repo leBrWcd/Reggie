@@ -6,6 +6,8 @@ import com.lebrwcd.reggie.backend.dto.DishDTO;
 import com.lebrwcd.reggie.backend.entity.Dish;
 import com.lebrwcd.reggie.common.R;
 
+import java.util.List;
+
 /**
  * @author lebrwcd
  * @date 2023/1/12
@@ -23,4 +25,6 @@ public interface DishService extends IService<Dish> {
     R<String> sellStaus(int status, String ids);
 
     R<String> deleteDish(String ids);
+
+    R<List<Dish>> listByParam(Long categoryId, String name);
 }
