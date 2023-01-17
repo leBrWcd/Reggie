@@ -41,7 +41,10 @@ public class LoginCheckFilter implements Filter{
                 // backend/* 和 front/** 这里是resource下的静态资源
                 "/backend/**",
                 "/front/**",
-                "/common/**"
+                "/common/**",
+                // 下面两个是移动端发起的请求
+                "/user/sendMsg",
+                "/user/login"
         };
 
         //2、判断本次请求是否需要处理
@@ -55,9 +58,20 @@ public class LoginCheckFilter implements Filter{
         }
 
         //4、判断登录状态，如果已登录，则直接放行
+        if(request.getSession().getAttribute("userPhone") != null){
+            Long userId = (Long) request.getSession().getAttribute("userPhone");
+            log.info("移动端用户已登录，用户id为：{}",userId);
+            // 存入ThreadLocal
+            BaseContext.setCurrentId(userId);
+
+            filterChain.doFilter(request,response);
+            return;
+        }
+
+        //4、判断登录状态，如果已登录，则直接放行
         if(request.getSession().getAttribute("employeeId") != null){
             Long userId = (Long) request.getSession().getAttribute("employeeId");
-            log.info("用户已登录，用户id为：{}",userId);
+            log.info("管理端用户已登录，用户id为：{}",userId);
             // 存入ThreadLocal
             BaseContext.setCurrentId(userId);
 
