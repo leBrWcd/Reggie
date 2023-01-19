@@ -6,6 +6,8 @@ import com.lebrwcd.reggie.backend.dto.SetmealDTO;
 import com.lebrwcd.reggie.backend.entity.Setmeal;
 import com.lebrwcd.reggie.common.R;
 
+import java.util.List;
+
 /**
  * @author lebrwcd
  * @date 2023/1/12
@@ -24,4 +26,6 @@ public interface SetmealService extends IService<Setmeal> {
     R<String> sellStaus(int status, String ids);
 
     R<String> deleteSetmeal(String ids);
+
+    R<List<SetmealDTO>> listParams(Long categoryId, Integer status);
 }

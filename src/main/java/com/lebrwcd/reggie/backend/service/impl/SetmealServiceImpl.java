@@ -8,6 +8,7 @@ import com.lebrwcd.reggie.backend.entity.Dish;
 import com.lebrwcd.reggie.backend.entity.Setmeal;
 import com.lebrwcd.reggie.backend.entity.SetmealDish;
 import com.lebrwcd.reggie.backend.mapper.CategoryMapper;
+import com.lebrwcd.reggie.backend.mapper.SetmealDishMapper;
 import com.lebrwcd.reggie.backend.mapper.SetmealMapper;
 import com.lebrwcd.reggie.backend.service.SetmealDishService;
 import com.lebrwcd.reggie.backend.service.SetmealService;
@@ -40,6 +41,9 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
     @Autowired
     private SetmealService setmealService;
+
+    @Autowired
+    private SetmealDishMapper setmealDishMapper;
 
     @Transactional
     @Override
@@ -176,5 +180,26 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
             baseMapper.deleteBatchIds(idList);
         }
         return R.success("删除成功");
+    }
+
+    @Override
+    public R<List<SetmealDTO>> listParams(Long categoryId, Integer status) {
+        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(categoryId != null,Setmeal::getCategoryId,categoryId)
+                .eq(status != null,Setmeal::getStatus,status);
+        List<Setmeal> setmealList = baseMapper.selectList(wrapper);
+
+        List<SetmealDTO> setmealDTOS = setmealList.stream().map( e -> {
+            SetmealDTO dto = new SetmealDTO();
+            BeanUtils.copyProperties(e,dto);
+            // 查询套餐所含菜品信息
+            LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(SetmealDish::getSetmealId,e.getId());
+            List<SetmealDish> setmealDishes = setmealDishMapper.selectList(queryWrapper);
+            dto.setSetmealDishes(setmealDishes);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return R.success(setmealDTOS);
     }
 }

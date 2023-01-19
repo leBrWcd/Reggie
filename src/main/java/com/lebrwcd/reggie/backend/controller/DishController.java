@@ -33,16 +33,18 @@ public class DishController {
 
     /**
      * 列表查询
-     * @param categoryId
-     * @param name
+     * @param categoryId 分类id
+     * @param name 菜品名称
+     * @param status 售卖状态
      * @return
      */
     @GetMapping("/list")
-    public R<List<Dish>> list(@RequestParam(required = false) Long categoryId,
-                              @RequestParam(required = false) String name) {
+    public R<List<DishDTO>> list(@RequestParam(required = false) Long categoryId,
+                              @RequestParam(required = false) String name,
+                              @RequestParam(required = false) Integer status) {
 
         log.info("菜品查询列表：categoryId : {} , name = {}",categoryId,name);
-        return dishService.listByParam(categoryId,name);
+        return dishService.listByParam(categoryId,name,status);
 
     }
 

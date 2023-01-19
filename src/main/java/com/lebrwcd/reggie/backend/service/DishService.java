@@ -26,5 +26,5 @@ public interface DishService extends IService<Dish> {
 
     R<String> deleteDish(String ids);
 
-    R<List<Dish>> listByParam(Long categoryId, String name);
+    R<List<DishDTO>> listByParam(Long categoryId, String name,Integer status);
 }

@@ -18,9 +18,12 @@ import com.lebrwcd.reggie.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -193,13 +196,26 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     }
 
     @Override
-    public R<List<Dish>> listByParam(Long categoryId, String name) {
+    public R<List<DishDTO>> listByParam(Long categoryId, String name, Integer status) {
 
         // 1.判断两个条件
         LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(categoryId != null, Dish::getCategoryId, categoryId)
-                .like(name != null,Dish::getName,name);
+                .eq(status != null, Dish::getStatus, status)
+                .like(name != null, Dish::getName, name);
         List<Dish> dishes = baseMapper.selectList(wrapper);
-        return R.success(dishes);
+        // 封装DishDtO
+        List<DishDTO> dishDTOS = dishes.stream().map(e -> {
+            DishDTO dto = new DishDTO();
+            BeanUtils.copyProperties(e, dto);
+            // 查询菜品是否设置了口味信息
+            LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(DishFlavor::getDishId, e.getId());
+            List<DishFlavor> dishFlavors = flavorMapper.selectList(queryWrapper);
+            dto.setFlavors(dishFlavors);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return R.success(dishDTOS);
     }
 }

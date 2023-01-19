@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * ClassName SetmealController
  * Description 套餐管理控制器
@@ -23,9 +25,14 @@ public class SetmealController {
 
     @Autowired
     private SetmealService setmealService;
-/*
 
-    */
+    @GetMapping("/list")
+    public R<List<SetmealDTO>> listParams(@RequestParam("categoryId") Long categoryId,
+                                          @RequestParam("status") Integer status) {
+        //list?categoryId=1413342269393674242&status=1
+        return setmealService.listParams(categoryId,status);
+    }
+
     /**
      * 删除套餐 - 批量删除/单个删除
      * @param ids
