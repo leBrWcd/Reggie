@@ -1,9 +1,14 @@
 package com.lebrwcd.reggie.backend.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lebrwcd.reggie.backend.entity.User;
+import com.lebrwcd.reggie.backend.service.UserService;
 import com.lebrwcd.reggie.common.R;
 import com.lebrwcd.reggie.common.util.BaseContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.*;
@@ -21,6 +26,9 @@ public class LoginCheckFilter implements Filter{
 
     // 路径匹配器，支持通配符
     public static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -57,10 +65,14 @@ public class LoginCheckFilter implements Filter{
             return;
         }
 
-        //4、判断登录状态，如果已登录，则直接放行
+        //4、移动端========判断登录状态，如果已登录，则直接放行
         if(request.getSession().getAttribute("userPhone") != null){
-            Long userId = (Long) request.getSession().getAttribute("userPhone");
-            log.info("移动端用户已登录，用户id为：{}",userId);
+            String userPhone = (String) request.getSession().getAttribute("userPhone");
+            log.info("移动端用户已登录，用户手机号为：{}",userPhone);
+            // 根据手机号获取当前用户id
+            LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(User::getPhone,userPhone);
+            Long userId = userService.getOne(wrapper).getId();
             // 存入ThreadLocal
             BaseContext.setCurrentId(userId);
 
@@ -68,7 +80,7 @@ public class LoginCheckFilter implements Filter{
             return;
         }
 
-        //4、判断登录状态，如果已登录，则直接放行
+        //4、管理端=======判断登录状态，如果已登录，则直接放行
         if(request.getSession().getAttribute("employeeId") != null){
             Long userId = (Long) request.getSession().getAttribute("employeeId");
             log.info("管理端用户已登录，用户id为：{}",userId);

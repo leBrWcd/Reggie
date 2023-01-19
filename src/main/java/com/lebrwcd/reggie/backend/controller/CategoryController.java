@@ -36,10 +36,13 @@ public class CategoryController {
     @GetMapping("/list")
     public R<List<Category>> getCategoryList(Integer type) {
         log.info("菜品分类type ==========={}",type);
-        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Category::getType,type);
-        List<Category> list = categoryService.list(wrapper);
-        return R.success(list);
+        if (type != null) {
+            LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Category::getType,type);
+            List<Category> list = categoryService.list(wrapper);
+            return R.success(list);
+        }
+        return R.success(categoryService.list(null));
     }
 
     @DeleteMapping
