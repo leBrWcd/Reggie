@@ -5,15 +5,14 @@ package com.lebrwcd.reggie.backend.controller;/**
  */
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lebrwcd.reggie.backend.dto.OrderSubmitDTO;
 import com.lebrwcd.reggie.backend.entity.Orders;
 import com.lebrwcd.reggie.backend.service.OrderService;
 import com.lebrwcd.reggie.common.R;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +32,12 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @PostMapping("/submit")
+    public R<String> submitOrder(@RequestBody OrderSubmitDTO dto) {
+        log.info("订单信息: {}",dto.toString());
+        return orderService.submitOrder(dto);
+    }
+
     //http://localhost:8080/order/
     // page?page=1&pageSize=10&number=111&beginTime=2023-01-14 00:00:00&endTime=2023-01-25 23:59:59
     @GetMapping("/page")
@@ -43,5 +48,7 @@ public class OrderController {
                                      @RequestParam(value = "endTime",required = false) LocalDateTime endTime) {
         return null;
     }
+
+
 
 }
