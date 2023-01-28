@@ -27,8 +27,8 @@ function setmealListApi(data) {
 //获取购物车内商品的集合
 function cartListApi(data) {
     return $axios({
-        // 'url': '/shoppingCart/list',
-        'url' : '/front/cartData.json',
+        'url': '/shoppingCart/list',
+        // 'url' : '/front/cartData.json',
         'method': 'get',
         params:{...data}
     })
@@ -51,7 +51,14 @@ function  updateCartApi(data){
         data
       })
 }
-
+//购物车中修改商品
+function  CartNumAddApi(data){
+    return $axios({
+        'url': '/shoppingCart/addNum',
+        'method': 'post',
+        data
+    })
+}
 //删除购物车的商品
 function clearCartApi() {
     return $axios({

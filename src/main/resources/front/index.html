@@ -133,7 +133,7 @@
                 </div>
                 <div class="divDishNum">{{item.number}}</div>
                 <div class="divAdd">
-                  <img src="./images/add.png" @click="cartNumAdd(item)"/>
+                  <img src="./images/add.png" @click="addNum(item)"/>
                 </div>
               </div>
               <div class="divSplit"></div>
@@ -293,6 +293,12 @@
             this.initData()
           },
           methods:{
+
+            // 购物车商品数量添加
+            async addNum(item) {
+              CartNumAddApi({shoppingCart : item})
+              this.getCartData()
+            },
             //初始化数据
             initData(){
               Promise.all([categoryListApi(),cartListApi({})]).then(res=>{
